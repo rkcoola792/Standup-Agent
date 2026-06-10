@@ -1,7 +1,15 @@
-const { execSync } = require("child_process");
+const { getMyTickets } = require("./jira");
+const { generateStandup } = require("./standup");
 
-const commits = execSync(
-  'git log --since="1 day ago" --pretty=format:"%s"'
-).toString();
+(async () => {
+  try {
+    const tickets = await getMyTickets();
 
-console.log(commits);
+    const standup = await generateStandup(tickets);
+
+    console.log("\n===== STANDUP =====\n");
+    console.log(standup);
+  } catch (error) {
+    console.error(error.response?.data || error.message);
+  }
+})();
